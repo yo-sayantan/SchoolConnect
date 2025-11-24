@@ -1,0 +1,143 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:9.1
+    container_name: schoolconnect-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: schoolconnect_auth
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./mysql-init:/docker-entrypoint-initdb.d
+    networks:
+      - school-network
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      timeout: 20s
+      retries: 10
+
+  discovery-service:
+    build:
+      context: .
+      dockerfile: backend/discovery-service/Dockerfile
+    container_name: schoolconnect-discovery
+    ports:
+      - "8761:8761"
+    networks:
+      - school-network
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8761/actuator/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  api-gateway:
+    build:
+      context: .
+      dockerfile: backend/api-gateway/Dockerfile
+    container_name: schoolconnect-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-service:8761/eureka/
+    depends_on:
+      discovery-service:
+        condition: service_healthy
+    networks:
+      - school-network
+
+  auth-service:
+    build:
+      context: .
+      dockerfile: backend/auth-service/Dockerfile
+    container_name: schoolconnect-auth
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/schoolconnect_auth?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-service:8761/eureka/
+    depends_on:
+      mysql:
+        condition: service_healthy
+      discovery-service:
+        condition: service_healthy
+    networks:
+      - school-network
+
+  academic-service:
+    build:
+      context: .
+      dockerfile: backend/academic-service/Dockerfile
+    container_name: schoolconnect-academic
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/schoolconnect_academic?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-service:8761/eureka/
+    depends_on:
+      mysql:
+        condition: service_healthy
+      discovery-service:
+        condition: service_healthy
+    networks:
+      - school-network
+
+  communication-service:
+    build:
+      context: .
+      dockerfile: backend/communication-service/Dockerfile
+    container_name: schoolconnect-communication
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/schoolconnect_communication?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-service:8761/eureka/
+    depends_on:
+      mysql:
+        condition: service_healthy
+      discovery-service:
+        condition: service_healthy
+    networks:
+      - school-network
+
+  calendar-service:
+    build:
+      context: .
+      dockerfile: backend/calendar-service/Dockerfile
+    container_name: schoolconnect-calendar
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/schoolconnect_calendar?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-service:8761/eureka/
+    depends_on:
+      mysql:
+        condition: service_healthy
+      discovery-service:
+        condition: service_healthy
+    networks:
+      - school-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: schoolconnect-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8080
+    depends_on:
+      - api-gateway
+    networks:
+      - school-network
+
+networks:
+  school-network:
+    driver: bridge
+
+volumes:
+  db_data:
