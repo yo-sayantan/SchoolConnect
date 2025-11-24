@@ -1,0 +1,63 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: auth-service
+          uri: lb://auth-service
+          predicates:
+            - Path=/api/auth/**
+          filters:
+            - StripPrefix=2
+        - id: academic-service
+          uri: lb://academic-service
+          predicates:
+            - Path=/api/academic/**
+          filters:
+            - StripPrefix=2
+            - name: JwtAuthenticationFilter
+        - id: communication-service
+          uri: lb://communication-service
+          predicates:
+            - Path=/api/communication/**
+          filters:
+            - StripPrefix=2
+            - name: JwtAuthenticationFilter
+        - id: calendar-service
+          uri: lb://calendar-service
+          predicates:
+            - Path=/api/calendar/**
+          filters:
+            - StripPrefix=2
+            - name: JwtAuthenticationFilter
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "http://localhost:3000"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
+            allowCredentials: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+
+jwt:
+  secret: schoolconnect-secret-key-change-in-production-minimum-256-bits
+
