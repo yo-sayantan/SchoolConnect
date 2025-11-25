@@ -15,6 +15,7 @@ echo   5. api-gateway
 echo   6. discovery-service
 echo   7. frontend
 echo   8. mysql
+echo   9. all services
 echo.
 set /p service="Enter service name: "
 
@@ -32,6 +33,22 @@ if "%service%"=="5" set service=api-gateway
 if "%service%"=="6" set service=discovery-service
 if "%service%"=="7" set service=frontend
 if "%service%"=="8" set service=mysql
+
+if "%service%"=="9" (
+    echo.
+    echo Rebuilding all services...
+    docker-compose up -d --build
+    if errorlevel 1 (
+        echo ERROR: Failed to rebuild all services!
+        pause
+        exit /b 1
+    )
+    echo.
+    echo All services rebuilt and restarted successfully!
+    echo.
+    pause
+    exit /b 0
+)
 
 echo.
 echo Rebuilding %service%...

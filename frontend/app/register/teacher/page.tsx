@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { registrationService } from "@/services/api";
 
-export default function StudentRegistration() {
+export default function TeacherRegistration() {
     const router = useRouter();
     const [formData, setFormData] = useState({
         name: "",
@@ -13,9 +13,7 @@ export default function StudentRegistration() {
         password: "",
         confirmPassword: "",
         dateOfBirth: "",
-        address: "",
-        guardianName: "",
-        emergencyContact: ""
+        address: ""
     });
     const [idCardFront, setIdCardFront] = useState<File | null>(null);
     const [idCardBack, setIdCardBack] = useState<File | null>(null);
@@ -47,13 +45,10 @@ export default function StudentRegistration() {
         setError("");
 
         // Validation
-        // Validation
         if (formData.password !== formData.confirmPassword) {
             setError("Passwords do not match");
             return;
         }
-
-        // ID Card is now optional
 
         try {
             setUploading(true);
@@ -75,7 +70,7 @@ export default function StudentRegistration() {
             // Submit registration
             const registrationData = {
                 ...formData,
-                role: "STUDENT",
+                role: "TEACHER",
                 idCardFrontUrl: frontUrl,
                 idCardBackUrl: backUrl
             };
@@ -120,7 +115,7 @@ export default function StudentRegistration() {
         <div className="flex-1 bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4">
             <div className="max-w-2xl mx-auto">
                 <div className="bg-white rounded-2xl shadow-xl p-8">
-                    <h1 className="text-3xl font-bold text-gray-800 mb-2">Student Registration</h1>
+                    <h1 className="text-3xl font-bold text-gray-800 mb-2">Teacher Registration</h1>
                     <p className="text-gray-600 mb-6">
                         Fill in your details to register. Your application will be reviewed by the administration.
                     </p>
@@ -196,37 +191,8 @@ export default function StudentRegistration() {
                                     value={formData.address}
                                     onChange={handleChange}
                                     rows={3}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
                                 />
-                            </div>
-                        </div>
-
-                        {/* Guardian Information */}
-                        <div>
-                            <h3 className="text-lg font-semibold text-gray-700 mb-4">Guardian Information</h3>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Guardian Name *</label>
-                                    <input
-                                        type="text"
-                                        name="guardianName"
-                                        required
-                                        value={formData.guardianName}
-                                        onChange={handleChange}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Emergency Contact *</label>
-                                    <input
-                                        type="tel"
-                                        name="emergencyContact"
-                                        required
-                                        value={formData.emergencyContact}
-                                        onChange={handleChange}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
-                                    />
-                                </div>
                             </div>
                         </div>
 

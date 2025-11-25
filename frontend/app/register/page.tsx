@@ -34,7 +34,7 @@ export default function RegisterPage() {
     ];
 
     return (
-        <div className="min-h-screen flex items-center justify-center p-4 py-20">
+        <div className="flex-1 flex items-center justify-center p-4 py-20">
             <div className="max-w-4xl w-full">
                 {/* Header */}
                 <div className="text-center mb-12 animate-float">

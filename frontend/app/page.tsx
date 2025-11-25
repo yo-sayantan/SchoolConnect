@@ -56,16 +56,10 @@ export default function Home() {
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
                         <button
                             onClick={() => router.push("/login")}
-                            className="btn-primary text-lg px-10 py-4 inline-flex items-center gap-2 group min-w-[200px] justify-center"
+                            className="btn-primary text-lg px-10 py-4 inline-flex items-center gap-2 group"
                         >
-                            Login
+                            Get Started
                             <span className="group-hover:translate-x-1 transition-transform">→</span>
-                        </button>
-                        <button
-                            onClick={() => router.push("/register")}
-                            className="px-10 py-4 rounded-xl font-bold text-lg border-2 border-blue-600 text-blue-600 hover:bg-blue-50 transition-colors min-w-[200px]"
-                        >
-                            Sign Up
                         </button>
                     </div>
                 </div>
