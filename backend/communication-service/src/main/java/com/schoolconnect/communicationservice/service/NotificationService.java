@@ -27,7 +27,7 @@ public class NotificationService {
     }
 
     public List<Notification> getUnreadNotificationsByUser(Long userId) {
-        return notificationRepository.findByUserIdAndReadFalse(userId);
+        return notificationRepository.findByUserIdAndIsReadFalse(userId);
     }
 
     public List<Notification> getNotificationsByType(Notification.NotificationType type) {
@@ -42,15 +42,15 @@ public class NotificationService {
         Optional<Notification> notification = notificationRepository.findById(id);
         if (notification.isPresent()) {
             Notification n = notification.get();
-            n.setRead(true);
+            n.setIsRead(true);
             return notificationRepository.save(n);
         }
         return null;
     }
 
     public void markAllAsRead(Long userId) {
-        List<Notification> notifications = notificationRepository.findByUserIdAndReadFalse(userId);
-        notifications.forEach(n -> n.setRead(true));
+        List<Notification> notifications = notificationRepository.findByUserIdAndIsReadFalse(userId);
+        notifications.forEach(n -> n.setIsRead(true));
         notificationRepository.saveAll(notifications);
     }
 

@@ -49,22 +49,21 @@ const roles = [
 
 export default function LoginPage() {
     const router = useRouter();
-    const [step, setStep] = useState<"role" | "identifier" | "otp">("role");
+    const [step, setStep] = useState<"role" | "credentials">("role");
     const [selectedRole, setSelectedRole] = useState("");
     const [identifier, setIdentifier] = useState("");
-    const [otp, setOtp] = useState("");
+    const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
-    const [otpSent, setOtpSent] = useState(false);
 
     const handleRoleSelect = (roleId: string) => {
         setSelectedRole(roleId);
-        setStep("identifier");
+        setStep("credentials");
     };
 
-    const handleSendOTP = async () => {
-        if (!identifier) {
-            setError("Please enter your email or phone number");
+    const handleLogin = async () => {
+        if (!identifier || !password) {
+            setError("Please enter both email/phone and password");
             return;
         }
 
@@ -75,42 +74,7 @@ export default function LoginPage() {
             const response = await fetch("http://localhost:8080/api/auth/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ identifier })
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                setOtpSent(true);
-                setStep("otp");
-                // In development, show the OTP
-                if (data.otp) {
-                    alert(`OTP sent! (Dev mode: ${data.otp})`);
-                }
-            } else {
-                setError(data.error || "Failed to send OTP");
-            }
-        } catch (err) {
-            setError("Network error. Please try again.");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleVerifyOTP = async () => {
-        if (!otp || otp.length !== 6) {
-            setError("Please enter a valid 6-digit OTP");
-            return;
-        }
-
-        setLoading(true);
-        setError("");
-
-        try {
-            const response = await fetch("http://localhost:8080/api/auth/verify-otp", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ identifier, otpCode: otp })
+                body: JSON.stringify({ identifier, password })
             });
 
             const data = await response.json();
@@ -125,7 +89,7 @@ export default function LoginPage() {
                 // Redirect to dashboard
                 router.push(`/dashboard/${data.role.toLowerCase()}`);
             } else {
-                setError(data.error || "Invalid OTP");
+                setError(data.error || "Login failed");
             }
         } catch (err) {
             setError("Network error. Please try again.");
@@ -147,9 +111,7 @@ export default function LoginPage() {
                         Welcome Back! 👋
                     </h1>
                     <p className="text-gray-600 dark:text-gray-400 text-lg">
-                        {step === "role" && "Choose your role to continue"}
-                        {step === "identifier" && "Enter your details"}
-                        {step === "otp" && "Verify your OTP"}
+                        {step === "role" ? "Choose your role to continue" : "Enter your credentials"}
                     </p>
                 </div>
 
@@ -175,8 +137,8 @@ export default function LoginPage() {
                     </div>
                 )}
 
-                {/* Identifier Input */}
-                {step === "identifier" && (
+                {/* Credentials Input */}
+                {step === "credentials" && (
                     <div className="card max-w-md mx-auto space-y-6">
                         <button
                             onClick={() => setStep("role")}
@@ -190,7 +152,7 @@ export default function LoginPage() {
                                 Login as {roles.find(r => r.id === selectedRole)?.name}
                             </h3>
                             <p className="text-gray-600 dark:text-gray-400">
-                                We'll send you an OTP to verify
+                                Enter your email/phone and password
                             </p>
                         </div>
 
@@ -211,55 +173,20 @@ export default function LoginPage() {
                                 </div>
                             </div>
 
-                            {error && (
-                                <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-3 rounded-lg text-sm">
-                                    {error}
-                                </div>
-                            )}
-
-                            <button
-                                onClick={handleSendOTP}
-                                disabled={loading}
-                                className="btn-primary w-full flex items-center justify-center gap-2"
-                            >
-                                {loading ? "Sending..." : "Send OTP"}
-                                <ArrowRight className="w-5 h-5" />
-                            </button>
-                        </div>
-                    </div>
-                )}
-
-                {/* OTP Verification */}
-                {step === "otp" && (
-                    <div className="card max-w-md mx-auto space-y-6">
-                        <button
-                            onClick={() => setStep("identifier")}
-                            className="text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
-                        >
-                            ← Back
-                        </button>
-
-                        <div className="text-center">
-                            <div className="text-6xl mb-4">📱</div>
-                            <h3 className="text-2xl font-bold mb-2">
-                                Enter OTP
-                            </h3>
-                            <p className="text-gray-600 dark:text-gray-400">
-                                We sent a 6-digit code to<br />
-                                <span className="font-semibold">{identifier}</span>
-                            </p>
-                        </div>
-
-                        <div className="space-y-4">
                             <div>
-                                <input
-                                    type="text"
-                                    value={otp}
-                                    onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                                    placeholder="Enter 6-digit OTP"
-                                    className="input-field text-center text-2xl tracking-widest font-bold"
-                                    maxLength={6}
-                                />
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Password
+                                </label>
+                                <div className="relative">
+                                    <input
+                                        type="password"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        placeholder="Enter your password"
+                                        className="input-field pl-12"
+                                    />
+                                    <div className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400">🔒</div>
+                                </div>
                             </div>
 
                             {error && (
@@ -269,29 +196,22 @@ export default function LoginPage() {
                             )}
 
                             <button
-                                onClick={handleVerifyOTP}
-                                disabled={loading || otp.length !== 6}
+                                onClick={handleLogin}
+                                disabled={loading}
                                 className="btn-primary w-full flex items-center justify-center gap-2"
                             >
-                                {loading ? "Verifying..." : "Verify & Login"}
+                                {loading ? "Logging in..." : "Login"}
                                 <ArrowRight className="w-5 h-5" />
-                            </button>
-
-                            <button
-                                onClick={handleSendOTP}
-                                className="w-full text-center text-blue-600 hover:text-blue-700 font-medium text-sm"
-                            >
-                                Resend OTP
                             </button>
                         </div>
                     </div>
                 )}
 
                 {/* Decorative elements */}
-                <div className="fixed top-20 left-10 text-4xl animate-bounce-slow opacity-10">
+                <div className="fixed top-20 left-10 text-4xl animate-bounce-slow opacity-10 pointer-events-none">
                     🎨
                 </div>
-                <div className="fixed bottom-20 right-10 text-4xl animate-float opacity-10">
+                <div className="fixed bottom-20 right-10 text-4xl animate-float opacity-10 pointer-events-none">
                     ⭐
                 </div>
             </div>

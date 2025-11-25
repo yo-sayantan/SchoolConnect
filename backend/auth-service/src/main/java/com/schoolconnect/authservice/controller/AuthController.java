@@ -57,25 +57,32 @@ public class AuthController {
         Optional<User> userOptional = userService.findByEmailOrPhoneNumber(request.getIdentifier());
 
         if (userOptional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("error", "User not found"));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Invalid credentials"));
         }
 
         User user = userOptional.get();
+
+        if (!userService.checkPassword(user, request.getPassword())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Invalid credentials"));
+        }
 
         if (!user.getActive()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body(Map.of("error", "User account is inactive"));
         }
 
-        // Generate and send OTP
-        String otp = otpService.generateOTP(request.getIdentifier());
+        // Generate JWT token
+        String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name());
 
-        return ResponseEntity.ok(Map.of(
-                "message", "OTP sent successfully",
-                "identifier", request.getIdentifier(),
-                "otp", otp // Remove this in production
-        ));
+        AuthResponse response = new AuthResponse(
+                token,
+                user.getRole().name(),
+                user.getName(),
+                user.getEmail());
+
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/verify-otp")

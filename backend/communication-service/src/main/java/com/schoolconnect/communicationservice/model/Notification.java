@@ -30,8 +30,8 @@ public class Notification {
     @Column(nullable = false)
     private NotificationType type;
 
-    @Column(nullable = false)
-    private Boolean read = false;
+    @Column(name = "is_read", nullable = false)
+    private Boolean isRead = false;
 
     @Column(nullable = false)
     private Boolean emailSent = false;

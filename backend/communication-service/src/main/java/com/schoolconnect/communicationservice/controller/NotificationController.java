@@ -24,7 +24,7 @@ public class NotificationController {
 
     @GetMapping("/user/{userId}/unread")
     public ResponseEntity<List<Notification>> getUnreadNotifications(@PathVariable Long userId) {
-        return ResponseEntity.ok(notificationRepository.findByUserIdAndRead(userId, false));
+        return ResponseEntity.ok(notificationRepository.findByUserIdAndIsRead(userId, false));
     }
 
     @PostMapping
@@ -36,7 +36,7 @@ public class NotificationController {
     public ResponseEntity<?> markAsRead(@PathVariable Long id) {
         return notificationRepository.findById(id)
                 .map(notification -> {
-                    notification.setRead(true);
+                    notification.setIsRead(true);
                     return ResponseEntity.ok(notificationRepository.save(notification));
                 })
                 .orElse(ResponseEntity.notFound().build());

@@ -47,3 +47,4 @@ target/
 */coverage/
 */.turbo/
 .m2/
+mysql-data/

@@ -34,7 +34,7 @@ export default function Home() {
     ];
 
     return (
-        <main className="flex min-h-screen flex-col items-center justify-center p-6">
+        <main className="flex flex-col items-center justify-center p-6 py-20">
             <div className="max-w-6xl w-full space-y-12 text-center">
                 {/* Hero Section */}
                 <div className="space-y-6 animate-float">
@@ -53,13 +53,21 @@ export default function Home() {
                         A fun and easy way to manage your school life - for students, parents, and teachers!
                     </p>
 
-                    <button
-                        onClick={() => router.push("/login")}
-                        className="btn-primary text-lg px-10 py-4 inline-flex items-center gap-2 group"
-                    >
-                        Get Started
-                        <span className="group-hover:translate-x-1 transition-transform">→</span>
-                    </button>
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
+                        <button
+                            onClick={() => router.push("/login")}
+                            className="btn-primary text-lg px-10 py-4 inline-flex items-center gap-2 group min-w-[200px] justify-center"
+                        >
+                            Login
+                            <span className="group-hover:translate-x-1 transition-transform">→</span>
+                        </button>
+                        <button
+                            onClick={() => router.push("/register")}
+                            className="px-10 py-4 rounded-xl font-bold text-lg border-2 border-blue-600 text-blue-600 hover:bg-blue-50 transition-colors min-w-[200px]"
+                        >
+                            Sign Up
+                        </button>
+                    </div>
                 </div>
 
                 {/* Features Grid */}
@@ -84,13 +92,13 @@ export default function Home() {
                 </div>
 
                 {/* Fun decorative elements */}
-                <div className="fixed top-10 left-10 text-6xl animate-bounce-slow opacity-20">
+                <div className="fixed top-10 left-10 text-6xl animate-bounce-slow opacity-20 pointer-events-none">
                     🎨
                 </div>
-                <div className="fixed bottom-10 right-10 text-6xl animate-bounce-slow opacity-20" style={{ animationDelay: '1s' }}>
+                <div className="fixed bottom-10 right-10 text-6xl animate-bounce-slow opacity-20 pointer-events-none" style={{ animationDelay: '1s' }}>
                     ⭐
                 </div>
-                <div className="fixed top-1/2 right-20 text-4xl animate-float opacity-20" style={{ animationDelay: '0.5s' }}>
+                <div className="fixed top-1/2 right-20 text-4xl animate-float opacity-20 pointer-events-none" style={{ animationDelay: '0.5s' }}>
                     📚
                 </div>
             </div>
