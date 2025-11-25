@@ -3,7 +3,7 @@ WORKDIR /app
 COPY backend/pom.xml .
 COPY backend/discovery-service/pom.xml discovery-service/
 COPY backend/discovery-service/src discovery-service/src
-RUN mvn -f discovery-service/pom.xml clean package -DskipTests
+RUN --mount=type=cache,target=/root/.m2 mvn -f discovery-service/pom.xml clean package -DskipTests
 
 FROM eclipse-temurin:21-jre
 WORKDIR /app

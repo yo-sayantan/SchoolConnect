@@ -3,7 +3,7 @@ WORKDIR /app
 COPY backend/pom.xml .
 COPY backend/auth-service/pom.xml auth-service/
 COPY backend/auth-service/src auth-service/src
-RUN mvn -f auth-service/pom.xml clean package -DskipTests
+RUN --mount=type=cache,target=/root/.m2 mvn -f auth-service/pom.xml clean package -DskipTests
 
 FROM eclipse-temurin:21-jre
 WORKDIR /app

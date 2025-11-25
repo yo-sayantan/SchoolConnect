@@ -3,7 +3,7 @@ WORKDIR /app
 COPY backend/pom.xml .
 COPY backend/calendar-service/pom.xml calendar-service/
 COPY backend/calendar-service/src calendar-service/src
-RUN mvn -f calendar-service/pom.xml clean package -DskipTests
+RUN --mount=type=cache,target=/root/.m2 mvn -f calendar-service/pom.xml clean package -DskipTests
 
 FROM eclipse-temurin:21-jre
 WORKDIR /app

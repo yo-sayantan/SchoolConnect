@@ -46,3 +46,4 @@ target/
 */.DS_Store
 */coverage/
 */.turbo/
+.m2/
