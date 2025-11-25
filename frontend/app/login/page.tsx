@@ -59,6 +59,9 @@ export default function LoginPage() {
     const handleRoleSelect = (roleId: string) => {
         setSelectedRole(roleId);
         setStep("credentials");
+        setError("");
+        setIdentifier("");
+        setPassword("");
     };
 
     const handleLogin = async () => {
@@ -74,7 +77,11 @@ export default function LoginPage() {
             const response = await fetch("http://localhost:8080/api/auth/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ identifier, password })
+                body: JSON.stringify({
+                    identifier,
+                    password,
+                    role: selectedRole.toUpperCase()
+                })
             });
 
             const data = await response.json();

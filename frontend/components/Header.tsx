@@ -27,6 +27,12 @@ export default function Header() {
                             <span>✉️</span>
                             <span>info@greenwood.edu</span>
                         </div>
+                        <a
+                            href="/register"
+                            className="bg-white text-purple-600 px-4 py-2 rounded-lg font-bold hover:bg-gray-100 transition-colors shadow-md"
+                        >
+                            Sign Up
+                        </a>
                     </div>
                 </div>
             </div>

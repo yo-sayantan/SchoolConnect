@@ -68,6 +68,11 @@ public class AuthController {
                     .body(Map.of("error", "Invalid credentials"));
         }
 
+        if (!user.getRole().name().equalsIgnoreCase(request.getRole())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Invalid role for this user"));
+        }
+
         if (!user.getActive()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body(Map.of("error", "User account is inactive"));

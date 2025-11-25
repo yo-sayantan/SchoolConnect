@@ -16,7 +16,7 @@ spring:
           predicates:
             - Path=/api/auth/**
           filters:
-            - StripPrefix=2
+            - StripPrefix=1
         - id: academic-service
           uri: lb://academic-service
           predicates:

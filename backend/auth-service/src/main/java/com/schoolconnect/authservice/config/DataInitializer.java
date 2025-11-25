@@ -56,7 +56,8 @@ public class DataInitializer implements CommandLineRunner {
         user.setPhoneNumber(phone);
         user.setName(name);
         user.setRole(role);
-        user.setPassword(passwordEncoder.encode(password));
+        // user.setPassword(passwordEncoder.encode(password)); // Disable encryption
+        user.setPassword(password);
         user.setActive(true);
         user.setVerified(true);
         userRepository.save(user);

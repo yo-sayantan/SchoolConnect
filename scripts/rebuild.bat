@@ -24,6 +24,15 @@ if "%service%"=="" (
     exit /b 1
 )
 
+if "%service%"=="1" set service=auth-service
+if "%service%"=="2" set service=academic-service
+if "%service%"=="3" set service=communication-service
+if "%service%"=="4" set service=calendar-service
+if "%service%"=="5" set service=api-gateway
+if "%service%"=="6" set service=discovery-service
+if "%service%"=="7" set service=frontend
+if "%service%"=="8" set service=mysql
+
 echo.
 echo Rebuilding %service%...
 docker-compose up -d --build %service%
