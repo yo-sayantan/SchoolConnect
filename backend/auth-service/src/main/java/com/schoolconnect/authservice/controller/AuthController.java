@@ -53,7 +53,14 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
-        Optional<User> userOptional = userService.findByEmailOrPhoneNumber(request.getIdentifier());
+        String identifier = request.getIdentifier() != null ? request.getIdentifier().trim() : null;
+        String password = request.getPassword() != null ? request.getPassword().trim() : null;
+
+        if (identifier == null || password == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Identifier and password are required"));
+        }
+
+        Optional<User> userOptional = userService.findByEmailOrPhoneNumber(identifier);
 
         if (userOptional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -62,7 +69,7 @@ public class AuthController {
 
         User user = userOptional.get();
 
-        if (!userService.checkPassword(user, request.getPassword())) {
+        if (!userService.checkPassword(user, password)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("error", "Invalid credentials"));
         }
@@ -147,5 +154,19 @@ public class AuthController {
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(Map.of("error", "Token validation failed"));
+    }
+
+    @PutMapping("/users/{id}")
+    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody User updatedUser) {
+        return userService.findById(id)
+                .map(user -> {
+                    user.setName(updatedUser.getName());
+                    user.setEmail(updatedUser.getEmail());
+                    user.setPhoneNumber(updatedUser.getPhoneNumber());
+                    // Add other fields as necessary
+                    userService.updateUser(user);
+                    return ResponseEntity.ok(Map.of("message", "User updated successfully"));
+                })
+                .orElse(ResponseEntity.notFound().build());
     }
 }

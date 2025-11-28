@@ -44,7 +44,19 @@ public class AttendanceController {
     }
 
     @PostMapping("/bulk")
-    public ResponseEntity<List<Attendance>> createBulkAttendance(@RequestBody List<Attendance> attendanceList) {
+    public ResponseEntity<?> createBulkAttendance(
+            @RequestBody com.schoolconnect.academicservice.dto.AttendanceEntryDto attendanceEntryDto) {
+        List<Attendance> attendanceList = new java.util.ArrayList<>();
+        for (com.schoolconnect.academicservice.dto.AttendanceEntryDto.StudentAttendanceDto studentAttendance : attendanceEntryDto
+                .getStudentAttendance()) {
+            Attendance attendance = new Attendance();
+            attendance.setStudentId(studentAttendance.getStudentId());
+            attendance.setClassId(attendanceEntryDto.getClassId());
+            attendance.setDate(attendanceEntryDto.getDate());
+            attendance.setStatus(studentAttendance.getStatus());
+            attendance.setRemarks(studentAttendance.getRemarks());
+            attendanceList.add(attendance);
+        }
         return ResponseEntity.ok(attendanceRepository.saveAll(attendanceList));
     }
 

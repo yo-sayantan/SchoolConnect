@@ -18,8 +18,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     public User createUser(User user) {
-        // user.setPassword(passwordEncoder.encode(user.getPassword())); // Disable
-        // encryption
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 

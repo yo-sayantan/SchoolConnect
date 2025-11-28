@@ -33,6 +33,16 @@ public class AnalyticsController {
         return ResponseEntity.ok(summary);
     }
 
+    @GetMapping("/stats/{studentId}")
+    public ResponseEntity<?> getDashboardStats(@PathVariable Long studentId) {
+        return ResponseEntity.ok(analyticsService.getDashboardStats(studentId));
+    }
+
+    @GetMapping("/yearly/{studentId}")
+    public ResponseEntity<java.util.Map<Integer, Double>> getYearlyPerformance(@PathVariable Long studentId) {
+        return ResponseEntity.ok(analyticsService.getYearlyPerformance(studentId));
+    }
+
     @PostMapping("/rankings/generate")
     public ResponseEntity<?> generateRankings(
             @RequestParam Long classId,

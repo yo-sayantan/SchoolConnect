@@ -1,6 +1,6 @@
 export default function Footer() {
     return (
-        <footer className="bg-gradient-to-r from-gray-800 to-gray-900 text-white py-6 mt-auto">
+        <footer className="bg-gradient-to-r from-gray-800 to-gray-900 text-white py-6 mt-auto sticky bottom-0 z-50">
             <div className="max-w-7xl mx-auto px-6">
                 <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                     {/* Company Branding */}
@@ -27,10 +27,10 @@ export default function Footer() {
 
                 {/* Links */}
                 <div className="mt-4 pt-4 border-t border-gray-700 flex flex-wrap justify-center gap-6 text-sm opacity-75">
-                    <a href="#" className="hover:text-blue-400 transition-colors">Privacy Policy</a>
-                    <a href="#" className="hover:text-blue-400 transition-colors">Terms of Service</a>
-                    <a href="#" className="hover:text-blue-400 transition-colors">Support</a>
-                    <a href="#" className="hover:text-blue-400 transition-colors">Contact Us</a>
+                    <a href="/privacy" className="hover:text-blue-400 transition-colors">Privacy Policy</a>
+                    <a href="/terms" className="hover:text-blue-400 transition-colors">Terms of Service</a>
+                    <a href="/support" className="hover:text-blue-400 transition-colors">Support</a>
+                    <a href="/contact" className="hover:text-blue-400 transition-colors">Contact Us</a>
                 </div>
             </div>
         </footer>

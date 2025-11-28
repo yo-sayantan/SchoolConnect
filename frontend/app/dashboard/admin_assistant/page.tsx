@@ -14,6 +14,19 @@ import {
     X,
     UserPlus
 } from "lucide-react";
+import {
+    BarChart,
+    Bar,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    ResponsiveContainer,
+    PieChart,
+    Pie,
+    Cell,
+    Legend
+} from "recharts";
 
 export default function AdminDashboard() {
     const router = useRouter();
@@ -91,6 +104,58 @@ export default function AdminDashboard() {
                             <p className="text-2xl font-bold text-gray-800">{stat.value}</p>
                         </div>
                     ))}
+                </div>
+
+                {/* Analytics Overview */}
+                <div className="grid lg:grid-cols-2 gap-6">
+                    <div className="card h-80">
+                        <h2 className="text-xl font-bold mb-4 text-gray-800">School Demographics</h2>
+                        <ResponsiveContainer width="100%" height="100%">
+                            <PieChart>
+                                <Pie
+                                    data={[
+                                        { name: 'Students', value: 1234 },
+                                        { name: 'Teachers', value: 85 },
+                                        { name: 'Staff', value: 10 },
+                                    ]}
+                                    cx="50%"
+                                    cy="50%"
+                                    innerRadius={60}
+                                    outerRadius={80}
+                                    fill="#8884d8"
+                                    dataKey="value"
+                                    label
+                                >
+                                    {['#0088FE', '#00C49F', '#FFBB28'].map((entry, index) => (
+                                        <Cell key={`cell-${index}`} fill={['#0088FE', '#00C49F', '#FFBB28'][index]} />
+                                    ))}
+                                </Pie>
+                                <Tooltip />
+                                <Legend />
+                            </PieChart>
+                        </ResponsiveContainer>
+                    </div>
+
+                    <div className="card h-80">
+                        <h2 className="text-xl font-bold mb-4 text-gray-800">Attendance Overview (Last 5 Days)</h2>
+                        <ResponsiveContainer width="100%" height="100%">
+                            <BarChart
+                                data={[
+                                    { day: 'Mon', present: 95 },
+                                    { day: 'Tue', present: 92 },
+                                    { day: 'Wed', present: 96 },
+                                    { day: 'Thu', present: 94 },
+                                    { day: 'Fri', present: 91 },
+                                ]}
+                            >
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis dataKey="day" />
+                                <YAxis domain={[0, 100]} />
+                                <Tooltip />
+                                <Bar dataKey="present" fill="#82ca9d" name="Attendance %" radius={[4, 4, 0, 0]} />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
                 </div>
 
                 {/* Quick Actions */}

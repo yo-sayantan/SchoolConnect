@@ -23,6 +23,7 @@ public class AnalyticsService {
     private final MarksRepository marksRepository;
     private final StudentRankingRepository studentRankingRepository;
     private final SubjectRepository subjectRepository;
+    private final com.schoolconnect.academicservice.repository.AttendanceRepository attendanceRepository;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     /**
@@ -228,5 +229,42 @@ public class AnalyticsService {
         }
 
         return stats;
+    }
+
+    public com.schoolconnect.academicservice.dto.StudentStatsDto getDashboardStats(Long studentId) {
+        // Calculate Attendance Percentage
+        long totalAttendance = attendanceRepository.countByStudentId(studentId);
+        long presentCount = attendanceRepository.countByStudentIdAndStatus(studentId,
+                com.schoolconnect.academicservice.model.Attendance.AttendanceStatus.PRESENT);
+        double attendancePercentage = totalAttendance > 0 ? ((double) presentCount / totalAttendance) * 100 : 0.0;
+
+        // Calculate Average Grade
+        Double avgPercentage = marksRepository.findAveragePercentageByStudentId(studentId);
+        double averageGrade = avgPercentage != null ? avgPercentage : 0.0;
+
+        // Total Classes (Approximated by attendance records for now, or fetch from
+        // schedule)
+        int totalClasses = (int) totalAttendance;
+        int classesAttended = (int) presentCount;
+
+        return new com.schoolconnect.academicservice.dto.StudentStatsDto(
+                studentId,
+                attendancePercentage,
+                averageGrade,
+                totalClasses,
+                classesAttended);
+    }
+
+    /**
+     * Get yearly performance for a student
+     */
+    public Map<Integer, Double> getYearlyPerformance(Long studentId) {
+        List<Marks> allMarks = marksRepository.findByStudentId(studentId);
+
+        // Group by year (from exam date) and calculate average
+        return allMarks.stream()
+                .collect(Collectors.groupingBy(
+                        m -> m.getExamDate().getYear(),
+                        Collectors.averagingDouble(Marks::getPercentage)));
     }
 }

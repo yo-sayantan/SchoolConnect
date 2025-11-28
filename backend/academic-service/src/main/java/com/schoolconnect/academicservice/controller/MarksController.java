@@ -41,6 +41,28 @@ public class MarksController {
         return ResponseEntity.ok(marksRepository.save(marks));
     }
 
+    @PostMapping("/bulk")
+    public ResponseEntity<?> createBulkMarks(
+            @RequestBody com.schoolconnect.academicservice.dto.MarksEntryDto marksEntryDto) {
+        List<Marks> marksList = new java.util.ArrayList<>();
+        for (com.schoolconnect.academicservice.dto.MarksEntryDto.StudentMarkDto studentMark : marksEntryDto
+                .getStudentMarks()) {
+            Marks marks = new Marks();
+            marks.setStudentId(studentMark.getStudentId());
+            marks.setClassId(marksEntryDto.getClassId());
+            marks.setSubjectId(marksEntryDto.getSubjectId());
+            marks.setExamType(marksEntryDto.getExamType());
+            marks.setTerm(marksEntryDto.getTerm());
+            marks.setExamName(marksEntryDto.getExamName());
+            marks.setExamDate(marksEntryDto.getExamDate());
+            marks.setTotalMarks(marksEntryDto.getTotalMarks());
+            marks.setMarksObtained(studentMark.getMarksObtained());
+            marks.setRemarks(studentMark.getRemarks());
+            marksList.add(marks);
+        }
+        return ResponseEntity.ok(marksRepository.saveAll(marksList));
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<?> updateMarks(@PathVariable Long id, @RequestBody Marks marks) {
         return marksRepository.findById(id)

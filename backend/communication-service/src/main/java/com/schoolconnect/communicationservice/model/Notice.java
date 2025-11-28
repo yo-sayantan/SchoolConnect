@@ -33,6 +33,9 @@ public class Notice {
     @Column(nullable = false)
     private Boolean active = true;
 
+    private String remarks;
+    private java.time.LocalDate archiveDate;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 

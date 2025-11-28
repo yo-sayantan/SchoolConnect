@@ -2,6 +2,7 @@ package com.schoolconnect.academicservice.repository;
 
 import com.schoolconnect.academicservice.model.Marks;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -15,4 +16,7 @@ public interface MarksRepository extends JpaRepository<Marks, Long> {
     List<Marks> findBySubjectId(Long subjectId);
 
     List<Marks> findByStudentIdAndSubjectId(Long studentId, Long subjectId);
+
+    @Query("SELECT AVG(m.percentage) FROM Marks m WHERE m.studentId = :studentId")
+    Double findAveragePercentageByStudentId(Long studentId);
 }
