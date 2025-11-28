@@ -39,25 +39,49 @@ export default function ParentDashboard() {
     useEffect(() => {
         const token = localStorage.getItem("token");
         const role = localStorage.getItem("role");
+        const userId = localStorage.getItem("userId");
 
         if (!token || role !== "PARENT") {
             router.push("/login");
             return;
         }
 
-        setUser({
-            name: localStorage.getItem("name"),
-            email: localStorage.getItem("email")
-        });
+        const fetchParentAndChildren = async () => {
+            try {
+                // 1. Fetch Parent Details to get linkedStudentIds
+                const parentData = await fetchWithAuth(`/auth/user/${userId}`);
+                setUser(parentData);
 
-        // Mocking children data for now (In real app, fetch from /auth/user/children or parse linkedStudentIds)
-        const mockChildren = [
-            { id: 1, name: "Emma Anderson", grade: "Grade 10", class: "10-A", avatar: "👧" },
-            { id: 2, name: "Liam Anderson", grade: "Grade 8", class: "8-B", avatar: "👦" }
-        ];
-        setChildren(mockChildren);
-        setSelectedChild(mockChildren[0]);
-        setLoading(false);
+                if (parentData.linkedStudentIds) {
+                    const studentIds = parentData.linkedStudentIds.split(',').map((id: string) => parseInt(id.trim()));
+
+                    // 2. Fetch Children Details
+                    const childrenData = await fetchWithAuth('/auth/users/batch', {
+                        method: 'POST',
+                        body: JSON.stringify(studentIds)
+                    });
+
+                    // Add avatars
+                    const childrenWithAvatars = childrenData.map((child: any) => ({
+                        ...child,
+                        avatar: child.gender === 'Female' ? '👧' : '👦', // Simple logic, can be improved
+                        grade: "Grade 10", // Placeholder as User entity doesn't have grade yet
+                        class: "10-A"
+                    }));
+
+                    setChildren(childrenWithAvatars);
+                    if (childrenWithAvatars.length > 0) {
+                        setSelectedChild(childrenWithAvatars[0]);
+                    }
+                }
+            } catch (error) {
+                console.error("Failed to fetch parent/children data", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchParentAndChildren();
     }, [router]);
 
     useEffect(() => {
@@ -106,36 +130,40 @@ export default function ParentDashboard() {
 
             <div className="flex-1 p-6 lg:p-8 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
                 <div className="max-w-7xl mx-auto space-y-6">
-                    {/* Welcome Header */}
-                    <div className="card bg-gradient-to-r from-green-500 via-teal-500 to-blue-500 text-white">
-                        <div className="flex items-center justify-between">
+                    {/* Welcome Header & Child Selector */}
+                    <div className="card bg-gradient-to-r from-green-500 via-teal-500 to-blue-500 text-white p-6">
+                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                             <div>
                                 <h1 className="text-3xl font-bold mb-2">Welcome, {user.name}! 👨‍👩‍👧</h1>
-                                <p className="opacity-90">Parent Dashboard</p>
+                                <p className="opacity-90">Monitoring progress for:</p>
                             </div>
-                            <button onClick={handleLogout} className="flex items-center gap-2 bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg">
-                                <LogOut className="w-5 h-5" />
-                                <span className="hidden md:inline">Logout</span>
-                            </button>
-                        </div>
-                    </div>
-                    {/* Children Selector */}
-                    <div className="grid md:grid-cols-2 gap-4">
-                        {children.map((child, index) => (
-                            <div
-                                key={index}
-                                onClick={() => setSelectedChild(child)}
-                                className={`card-hover cursor-pointer transition-all ${selectedChild?.id === child.id ? 'ring-4 ring-green-400 scale-105' : 'opacity-80 hover:opacity-100'} bg-gradient-to-br from-blue-50 to-purple-50`}
-                            >
-                                <div className="flex items-center gap-4">
-                                    <div className="text-5xl">{child.avatar}</div>
-                                    <div>
-                                        <h3 className="text-xl font-bold text-gray-800">{child.name}</h3>
-                                        <p className="text-gray-600">{child.grade} - Class {child.class}</p>
+
+                            <div className="flex items-center gap-4">
+                                <div className="relative">
+                                    <select
+                                        value={selectedChild?.id || ""}
+                                        onChange={(e) => {
+                                            const child = children.find(c => c.id === parseInt(e.target.value));
+                                            setSelectedChild(child);
+                                        }}
+                                        className="appearance-none bg-white/20 backdrop-blur-md text-white border border-white/30 rounded-xl px-4 py-2 pr-10 font-bold focus:outline-none focus:ring-2 focus:ring-white/50 cursor-pointer min-w-[200px]"
+                                    >
+                                        {children.map(child => (
+                                            <option key={child.id} value={child.id} className="text-gray-800">
+                                                {child.avatar} {child.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                                        <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
                                     </div>
                                 </div>
+
+                                <button onClick={handleLogout} className="bg-white/20 hover:bg-white/30 p-2 rounded-lg transition-colors">
+                                    <LogOut className="w-5 h-5" />
+                                </button>
                             </div>
-                        ))}
+                        </div>
                     </div>
 
                     {/* Stats */}
@@ -207,16 +235,21 @@ export default function ParentDashboard() {
                     {/* Quick Actions */}
                     <div className="grid md:grid-cols-4 gap-4">
                         {[
-                            { icon: "📊", label: "View Reports", color: "blue" },
-                            { icon: "📅", label: "Attendance", color: "green" },
-                            { icon: "💬", label: "Messages", color: "purple" },
-                            { icon: "📢", label: "Notices", color: "orange" }
+                            { icon: "📊", label: "View Reports", color: "blue", action: () => router.push(`/dashboard/parent/analytics?childId=${selectedChild?.id}`) },
+                            { icon: "📅", label: "Attendance", color: "green", action: () => { } },
+                            { icon: "💬", label: "Messages", color: "purple", action: () => router.push("/dashboard/parent/chat") },
+                            { icon: "📢", label: "Notices", color: "orange", action: () => router.push("/notices") }
                         ].map((action, index) => (
-                            <button key={index} className={`card-hover text-center p-6 bg-gradient-to-br from-${action.color}-50 to-${action.color}-100`}>
+                            <button
+                                key={index}
+                                onClick={action.action}
+                                className={`card-hover text-center p-6 bg-gradient-to-br from-${action.color}-50 to-${action.color}-100`}
+                            >
                                 <div className="text-4xl mb-2">{action.icon}</div>
                                 <p className="font-bold text-gray-800">{action.label}</p>
                             </button>
-                        ))}
+                        ))
+                        }
                     </div>
                 </div>
 

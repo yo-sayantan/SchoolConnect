@@ -381,9 +381,20 @@ def generate_sql():
     chunk_size = 1000
     for i in range(0, len(marks_entries), chunk_size):
         chunk = marks_entries[i:i + chunk_size]
-        if i > 0:
-             sql.append("INSERT INTO marks (id, student_id, subject_id, class_id, exam_type, term, exam_name, marks_obtained, total_marks, percentage, grade, remarks, exam_date, created_at, updated_at) VALUES")
-        sql.append(",\n".join(chunk) + ";")
+    sql.append("-- Assignments")
+    assignment_entries = []
+    # Assuming Class IDs 1, 2, 3 exist (Grade 10-A, 10-B, 9-A)
+    # Subjects: 1=Math, 2=Science, 3=English, 4=History
+    assignments_data = [
+        ("Algebra Quiz 1", 1, "2025-11-30", "PENDING", "HIGH"),
+        ("Physics Lab Report", 2, "2025-12-05", "PENDING", "NORMAL"),
+        ("Essay on Shakespeare", 3, "2025-11-28", "COMPLETED", "NORMAL"),
+        ("History Project", 4, "2025-12-10", "IN_PROGRESS", "HIGH"),
+    ]
+    for i, (title, subject_id, due_date, status, priority) in enumerate(assignments_data, 1):
+        assignment_entries.append(f"(NULL, '{title}', {subject_id}, {random.randint(1, len(CLASSES))}, '{due_date}', '{status}', '{priority}', NOW(), NOW())")
+    sql.append("INSERT INTO assignments (id, title, subject_id, class_id, due_date, status, priority, created_at, updated_at) VALUES")
+    sql.append(",\n".join(assignment_entries) + ";")
     sql.append("")
 
     # Attendance

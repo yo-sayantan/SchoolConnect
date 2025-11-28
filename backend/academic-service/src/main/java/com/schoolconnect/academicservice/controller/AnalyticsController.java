@@ -87,4 +87,14 @@ public class AnalyticsController {
         Map<String, Object> stats = analyticsService.getClassStatistics(classId, examType, term);
         return ResponseEntity.ok(stats);
     }
+
+    @GetMapping("/teacher/{teacherId}/performance")
+    public ResponseEntity<?> getTeacherPerformance(@PathVariable String teacherId) {
+        return ResponseEntity.ok(analyticsService.getTeacherPerformance(teacherId));
+    }
+
+    @GetMapping("/principal/school-stats")
+    public ResponseEntity<?> getSchoolStats() {
+        return ResponseEntity.ok(analyticsService.getSchoolStats());
+    }
 }

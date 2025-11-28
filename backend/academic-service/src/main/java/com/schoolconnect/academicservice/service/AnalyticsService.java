@@ -267,4 +267,51 @@ public class AnalyticsService {
                         m -> m.getExamDate().getYear(),
                         Collectors.averagingDouble(Marks::getPercentage)));
     }
+
+    /**
+     * Get aggregated performance for a teacher's classes
+     */
+    public Map<String, Object> getTeacherPerformance(String teacherId) {
+        // Mock implementation for MVP - in real app, fetch classes by teacherId first
+        // For now, we'll return mock data structure that matches the frontend
+        // expectations
+        Map<String, Object> performance = new HashMap<>();
+
+        List<Map<String, Object>> classPerformance = new ArrayList<>();
+        classPerformance.add(Map.of("name", "Grade 10A", "math", 85, "science", 78, "english", 82));
+        classPerformance.add(Map.of("name", "Grade 10B", "math", 75, "science", 85, "english", 80));
+        classPerformance.add(Map.of("name", "Grade 11A", "math", 90, "science", 88, "english", 92));
+
+        performance.put("classPerformance", classPerformance);
+
+        List<Map<String, Object>> overallTrend = new ArrayList<>();
+        overallTrend.add(Map.of("month", "Jan", "rating", 4.2));
+        overallTrend.add(Map.of("month", "Feb", "rating", 4.5));
+        overallTrend.add(Map.of("month", "Mar", "rating", 4.3));
+
+        performance.put("overallTrend", overallTrend);
+
+        return performance;
+    }
+
+    /**
+     * Get school-wide statistics for Principal
+     */
+    public Map<String, Object> getSchoolStats() {
+        Map<String, Object> stats = new HashMap<>();
+
+        // Mock data for MVP
+        stats.put("totalStudents", 1250);
+        stats.put("totalTeachers", 45);
+        stats.put("attendanceRate", 92.5);
+        stats.put("avgPerformance", 78.4);
+
+        List<Map<String, Object>> performanceTrend = new ArrayList<>();
+        performanceTrend.add(Map.of("month", "Jan", "academic", 82, "satisfaction", 75, "engagement", 80));
+        performanceTrend.add(Map.of("month", "Feb", "academic", 85, "satisfaction", 78, "engagement", 82));
+
+        stats.put("performanceTrend", performanceTrend);
+
+        return stats;
+    }
 }

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.List;
 
 @RestController
 @RequestMapping("/auth")
@@ -169,5 +170,29 @@ public class AuthController {
                     return ResponseEntity.ok(Map.of("message", "User updated successfully"));
                 })
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/user/{id}")
+    public ResponseEntity<?> getUserById(@PathVariable Long id) {
+        return userService.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/users/batch")
+    public ResponseEntity<?> getUsersBatch(@RequestBody List<Long> ids) {
+        List<User> users = userService.findAll().stream()
+                .filter(user -> ids.contains(user.getId()))
+                .map(user -> {
+                    // Return only necessary fields for security
+                    User safeUser = new User();
+                    safeUser.setId(user.getId());
+                    safeUser.setName(user.getName());
+                    safeUser.setRole(user.getRole());
+                    safeUser.setEmail(user.getEmail());
+                    return safeUser;
+                })
+                .toList();
+        return ResponseEntity.ok(users);
     }
 }
