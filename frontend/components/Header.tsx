@@ -22,30 +22,32 @@ export default function Header() {
     };
 
     return (
-        <header className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white shadow-lg">
-            <div className="max-w-7xl mx-auto px-6 py-4">
+        <header className="bg-white/70 backdrop-blur-xl border-b border-white/50 sticky top-0 z-50 transition-all duration-300">
+            <div className="w-full px-8 py-3">
                 <div className="flex items-center justify-between">
                     {/* School Logo & Name */}
-                    <div className="flex items-center gap-4 cursor-pointer" onClick={() => router.push("/")}>
-                        <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-3xl shadow-lg">
+                    <div className="flex items-center gap-3 cursor-pointer group" onClick={() => router.push("/")}>
+                        <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center text-2xl shadow-lg group-hover:scale-110 transition-transform duration-200">
                             🎓
                         </div>
                         <div>
-                            <h1 className="text-2xl font-bold">Greenwood International School</h1>
-                            <p className="text-sm opacity-90 flex items-center gap-2">
-                                <span>📍</span>
-                                <span>123 Education Lane, Silicon Valley, CA 94025</span>
+                            <h1 className="text-xl font-extrabold text-gray-900 tracking-tight group-hover:text-indigo-600 transition-colors">
+                                Greenwood International
+                            </h1>
+                            <p className="text-xs text-gray-500 font-medium flex items-center gap-1">
+                                <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                                Online Campus
                             </p>
                         </div>
                     </div>
 
                     {/* Quick Info */}
-                    <div className="hidden md:flex items-center gap-6 text-sm">
-                        <div className="flex items-center gap-2">
+                    <div className="hidden md:flex items-center gap-6 text-sm font-medium text-gray-600">
+                        <div className="flex items-center gap-2 hover:text-indigo-600 transition-colors cursor-pointer">
                             <span>📞</span>
                             <span>+1 (555) 123-4567</span>
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 hover:text-indigo-600 transition-colors cursor-pointer">
                             <span>✉️</span>
                             <span>info@greenwood.edu</span>
                         </div>
@@ -53,14 +55,14 @@ export default function Header() {
                         {isLoggedIn ? (
                             <button
                                 onClick={handleLogout}
-                                className="bg-white/10 text-white border border-white/20 px-4 py-2 rounded-lg font-bold hover:bg-white/20 transition-colors backdrop-blur-sm"
+                                className="bg-red-50 text-red-600 border border-red-100 px-4 py-2 rounded-xl font-bold hover:bg-red-100 transition-all shadow-sm hover:shadow-md"
                             >
                                 Logout
                             </button>
                         ) : (
                             <a
                                 href="/register"
-                                className="bg-white text-purple-600 px-4 py-2 rounded-lg font-bold hover:bg-gray-100 transition-colors shadow-md"
+                                className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-5 py-2 rounded-xl font-bold hover:shadow-lg hover:shadow-indigo-500/30 hover:-translate-y-0.5 transition-all duration-200"
                             >
                                 Sign Up
                             </a>

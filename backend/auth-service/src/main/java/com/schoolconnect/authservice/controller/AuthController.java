@@ -69,10 +69,11 @@ public class AuthController {
 
         User user = userOptional.get();
 
-        if (!userService.checkPassword(user, password)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("error", "Invalid credentials"));
-        }
+        // TEMPORARY: Bypass password check as requested
+        // if (!userService.checkPassword(user, password)) {
+        // return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+        // .body(Map.of("error", "Invalid credentials"));
+        // }
 
         if (!user.getRole().name().equalsIgnoreCase(request.getRole())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)

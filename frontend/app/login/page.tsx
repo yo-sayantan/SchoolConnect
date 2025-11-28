@@ -106,8 +106,8 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="flex-1 flex items-center justify-center p-4">
-            <div className="max-w-4xl w-full">
+        <div className="flex-1 flex flex-col items-center justify-center p-6 md:p-12">
+            <div className="w-full max-w-[1600px]">
                 {/* Header */}
                 <div className="text-center mb-8 animate-float">
                     <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-2 rounded-full text-sm font-semibold shadow-lg mb-4">
