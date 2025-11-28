@@ -76,7 +76,7 @@ The database is seeded with demo data. You can use the following accounts to log
 | Role          | Email                     | Password    |
 | ------------- | ------------------------- | ----------- |
 | **Admin**     | `admin@school.com`        | `password`  |
-| **Principal** | `headmaster@school.com`   | `password`  |
+| **Principal** | `principal@school.com`    | `password`  |
 | **Teacher**   | `teacher1@school.com`     | `password`  |
 | **Parent**    | `parent1@school.com`      | `password`  |
 | **Student**   | `student1@school.com`     | `password`  |
